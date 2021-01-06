@@ -20,7 +20,7 @@ myColours = [[96, 10, 75, 116, 182, 167],
 
 
 # Values are in BGR not RGB
-myColourValues = [[204, 204, 0],
+colourValues = [[204, 204, 0],
                   [0, 153, 0],
                   [204, 0, 204],
                   [0, 255, 255]]
@@ -31,7 +31,7 @@ myPoints = []
 
 
 # Used to recognize colour and track points for drawing
-def findColour(img, myColours, myColourValues):
+def findColour(img, myColours, colourValues):
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     counter = 0
     newPoints = []
@@ -40,7 +40,7 @@ def findColour(img, myColours, myColourValues):
         upper = np.array(colour[3:6])
         mask = cv2.inRange(imgHSV, lower, upper)
         x, y = get_contours(mask)
-        cv2.circle(imgResult, (np.float32(x), np.float32(y)), 15, myColourValues[counter], cv2.FILLED)
+        cv2.circle(imgResult, (np.float32(x), np.float32(y)), 15, colourValues[counter], cv2.FILLED)
         if x != 0 and y != 0:
             newPoints.append([x, y, counter])
         counter += 1
@@ -53,34 +53,36 @@ def get_contours(img):
     contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     x, y, w, h = 0, 0, 0, 0
     for cnt in contours:
-        area_og = int(cv2.contourArea(cnt))
-        if area_og > 50:
-            area = int(cv2.contourArea(cnt))
+        area = int(cv2.contourArea(cnt))
+        if area > 50:
             perimeter = int(cv2.arcLength(cnt, True))
+            
             # Calculates vertices
             approx_points = cv2.approxPolyDP(cnt, 0.02*(perimeter), True)
+            
             # gives x, y, width and height of all shapes
             x, y, w, h = cv2.boundingRect(approx_points)
+            
     return x+w/2, y
 
 
 # Used to draw all points
-def draw(myPoints, myColourValues):
+def draw(myPoints, colourValues):
     for point in myPoints:
         cv2.circle(imgResult, (np.float32(point[0]), np.float32(point[1])),
-                   5, myColourValues[point[2]], cv2.FILLED)
+                   5, colourValues[point[2]], cv2.FILLED)
 
 
 while True:
     _, image = cap.read(0)
     img = cv2.flip(image, 1)
     imgResult = img.copy()
-    newPoints = findColour(img, myColours, myColourValues)
+    newPoints = findColour(img, myColours, colourValues)
     if len(newPoints) != 0:
         for newpt in newPoints:
             myPoints.append(newpt)
     if len(myPoints) != 0:
-        draw(myPoints, myColourValues)
+        draw(myPoints, colourValues)
     cv2.imshow("Result", imgResult)
 
     # if 'q' is pressed, webcam turns off
