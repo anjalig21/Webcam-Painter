@@ -1,18 +1,4 @@
 import cv2
-<<<<<<< HEAD
-camera = cv2.VideoCapture(0)
-
-# Keep looping
-while True:
-    # Grab the current paintWindow
-    (grabbed, frame) = camera.read()
-    frame = cv2.flip(frame, 1)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-# Cleanup the camera and close any open windows
-camera.release()
-cv2.destroyAllWindows()
-=======
 import numpy as np
 
 frameWidth = 640
@@ -100,5 +86,3 @@ while True:
     # if 'q' is pressed, webcam turns off
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
->>>>>>> 624f6b7c0bcd79c5c3c5bbf33d99850dd04a7715
